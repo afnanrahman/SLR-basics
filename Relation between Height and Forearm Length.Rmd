@@ -1,0 +1,153 @@
+---
+title: "Relation between Height and Forearm Length"
+author: "AR3031"
+date: "September 26, 2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## I. Introduction 
+
+The data in the original a20a1data.csv file was collected by the course coordinators through Quercus. From the data of 346 enrolled students of STA302, 9 randomized numbers were chosen for further analysis. 
+
+For the randomization, sample(346, 9) was used in a r window to find the id of the 9 students:161, 15,82, 41, 125, 88, 244, 214, 142. The corresponding value with each id was accessed through VLOOKUP() function in excel. For example: 
+for accessing the height of id 15 the formula used was =VLOOKUP(15, A2:B347, 2, FALSE) as the value found was 162cm and similarly =VLOOKUP(15,A2:C347,3,FALSE) for the student's forearm measurement which is 20in. 
+The tenth data is my personal height 155 cm and forearm length of 19 inches. So the ten data for this analysis would be: 
+height= 183,162,178,177,165,163,191,182,167,155
+forearm_len= 24,20,22.5,21,26,23,26,25,24,19
+
+**Explanatory Variable and Response variable**
+
+The students' Height (in cm) is being considered as the explanatory/
+independent variable and the Forearm length (in inches) are taken as the response/ dependent variable. 
+
+In the data collection method, and during our lecture breakout sessions it was evident that most students were aware of their height whereas they had to measure their forearm length to provide the data. And in any study/ experiment the variable that is measured is considered as the response variable. 
+
+Moreover, from a biological perspective, humans' forearm length is dependent on their height. Ideally the taller the person is the longer their forearm is. 
+
+Therefore, in this analysis the **response variable** would be the **forearm length** and the **explanatory variable** would be **the height**
+
+
+## II. Exploratory Data Analysis
+Draw at most 3 plots to visually describe your data. Is your response variable approximately Normal?
+
+For the exploratory data analysis, the three plots used were: QQ plot, histogram of the discontinuous data (response variable: Forearm length), a height vs forearm length graph to check the data spread.
+
+The QQ plots are: 
+
+```{r, echo = FALSE}
+height= c(183,162,178,177,165,163,191,182,167,155)
+forearm_len= c(24,20,22.5,21,26,23,26,25,24,19)
+
+## QQ plots to check normality of the height var
+qqnorm(height, main="Normal QQ Plot: height3031 in cm", col="dark blue", cex=0.5)
+## to plot the best fitted line in the qq plot of the height var
+qqline(height, col="green")
+
+## QQ plots to check normality of the forearm length var
+qqnorm(forearm_len, main="Normal QQ Plot: forearm Length3031 in inches", col="violet", cex=0.5)
+
+## to plot the best fitted line in the qq plot ofthe height var
+qqline(forearm_len, col= "blue")
+
+```
+
+The QQ plots for both variables:"height" and "Forearm Length" were used to determine the normality. As the data for both moderately follow the reference lines (QQ line), therefore, it can be assumed that both sets of data is approximately Normal. 
+
+To determine the numerically describe the center, spread and the unusual points of the variables, summary() function was used to generate a brief 5 number summary: 
+
+```{r, echo = FALSE}
+# finding the summary of the both variables
+summary(height)
+summary(forearm_len)
+```
+
+The first summary suggests the spread of the explanatory variable (height). It ranges from 155 (min) to 191(max). The mean is the height is 172.3 cm 
+
+The second summary suggests the range of response variable: 19 to 26 and its mean is 23.05 inches.
+
+For further exploratory analysis, histogram of the response variable is shown. Due to a smaller spread of the response variable, this plot has been done to investigate the variable's continuity:    
+
+```{r, echo = FALSE}
+#histogram of the forearm length var in colour sky blue with a blue border 
+hist(forearm_len, main="Histogram of Forearm Length3031", border="blue", col="skyblue")
+```
+
+
+However, as there has been no forearm length data listed from the range 21 to 22 in our current data frame, the histogram has shown discontinuity for the response variable. This is inconsistent with our original csv file's data set. Therefore, for the sake of further analysis we would ignore this discrepency and would continue considering our response data as continuous variable.  
+
+Lastly, the  graph below is undertaken to see the spread of the response variable based on its corresponding explanatory variable.
+
+````{r, echo=FALSE}
+#to plot the graph in with the title Height vs Forearm Length3031
+plot(height,forearm_len, xlab="Height (cm)", ylab="Forearm Length (in)",main="Height vs Forearm Length3031")
+```
+
+Just by a brief skim over the data, a cubic (y(forearm len) = x^3 (height)) relation between the two variable can be deduced. In this case, the very 1st and the very last data would be considered as outliers. 
+
+
+## III. Methods and Model
+
+The linear regression model of forearm length and height is given below:
+
+```{r, echo=FALSE}
+
+#to plot the graph in colour magenta with filled circles with the title Height vs Forearm Length 
+plot(height,forearm_len, xlab="Height (cm)", ylab="Forearm Length in)",main="Height vs Forearm Length3031 ", col="magenta", pch=16)
+
+#to find the linear regrassion model
+lmod=lm(forearm_len~height)
+#to find a linear fit to lr model
+abline(lmod)
+```
+
+The Linear Regression model above illustrates a somewhat linearly increasing relationship between the height and the forearm length. To determine if this model is statistically significant, we would look into the statistical summary of the model.
+
+```{r, echo=FALSE}
+summary(lmod)
+```
+
+The regression parameter found from the estimates of beta _0 is -11.8647 and beta_1 is 0.2026 therefore not zero.
+
+
+**Interpretation of the regression parameters estimates:**
+
+The accuracy of the beta estimation can be determined by standard errors (SE). As the SE found is 0.0218 which is really small, therefore it denotes that the coefficient would not vary much during repeated sampling. Therefore, the results of this  linear model can be applied to the larger sample/population.
+
+Furthermore, to determine the significance and adequacy of our statistical reasoning a hypothesis test will be conducted.
+
+**Hypothesis Testing:**
+
+*Null hypothesis (H0):* The coefficient is equal to zero. Therefore no relationship between the two variables. 
+
+*Alternative Hypothesis (Ha):*The coefficient is not equal to zero, therefore, there is some relationship between the variable. 
+
+Now, from the summary above, the t-value of our predictor variable (height) is 9.284, which is significantly high and its p-value=1.47e-05 <0.05 is significantly small. Similarly, t-value and p-value of our intercept is respectively 3.149 and 0.0136<0.05. Therefore, our data favor that there is a non-zero correlation between our two variables: height and the forearm length. Thus we successfully reject the null hypothesis. 
+
+
+
+## IV. Discussions and Limitations:
+
+**Lurking Variable:**
+
+The possible lurking variable of this statistical study is the gender of the student. As biologically females have shorter body height than males. 
+
+
+**Limitations:**
+
+The limitation of the data can be the accuracy of the forearm measurements. During our breakout session, most of the members were confused if the measurement was from our eblow to wrist or to fingers tips. And thus we clarified it with our TA, however, as this analysis is based on the data collected from intro survey and not the breakdown session, therefore, there is a high possibility of wrong measurements for the forearm. 
+
+Moreover, as previously described in part two, the histogram showed a discontinuity of the response variable: forearm length. Due to the random selection of the data, our data frame did not include any forearm length from the range (21-22) while in our original csv file there were multiple values in that range. 
+
+
+**An Additional Linear Model for SLR Analysis:**
+
+Body mass and cholesterol level can be another potential pair of variable for further SLR analysis. As higher body mass is an indication of higher weight therefore higher body mass may cause the  higher level of cholesterol. Therefore, here the **cholesterol level ** is the **response variable**.
+
+_____________________________________________________________________________
+
+
+
+
+
